@@ -1,6 +1,6 @@
 [project]
 name = "whisper-asr-webservice"
-version = "1.10.0-dev"
+version = "1.2.0"
 description = "Whisper ASR Webservice is a general-purpose speech recognition webservice."
 requires-python = ">=3.10,<3.13"
 dependencies = [
@@ -11,7 +11,7 @@ dependencies = [
     "numpy (>=2.2.6)",
     "openai-whisper (>=20250625)",
     "faster-whisper (>=1.1.1)",
-    "whisperx (>=3.4.2)",
+    "whisperx",
     "tqdm (>=4.67.1)",
     "llvmlite (>=0.44.0)",
     "numba (>=0.61.2)",
@@ -29,8 +29,8 @@ requires-poetry = ">=2.0"
 packages = [{ include = "app" }]
 
 [project.urls]
-Homepage = "https://github.com/ahmetoner/whisper-asr-webservice/"
-Repository = "https://github.com/ahmetoner/whisper-asr-webservice"
+Homepage = "https://github.com/wzelek/whisper-asr-webservice-nemo/"
+Repository = "https://github.com/wzelek/whisper-asr-webservice-nemo"
 
 [project.scripts]
 whisper-asr-webservice = "app.webservice:start"
@@ -56,6 +56,7 @@ url = "https://download.pytorch.org/whl/cu126"
 priority = "explicit"
 
 [tool.poetry.dependencies]
+whisperx = { url = "https://github.com/wzelek/whisperX-nemo" }
 torch = [
     { markers = "extra == 'cpu' and extra != 'cuda' and platform_machine == 'x86_64' and sys_platform != 'darwin'", source = "pytorch-cpu"},
     { markers = "extra == 'cuda' and extra != 'cpu' and platform_machine == 'x86_64' and sys_platform != 'darwin'", source = "pytorch-cuda"},
