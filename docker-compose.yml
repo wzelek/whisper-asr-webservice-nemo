@@ -6,7 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - ASR_MODEL=base
+      - ASR_MODEL=large-v3
+      - ASR_ENGINE=whisperx
     ports:
       - "9000:9000"
     volumes:

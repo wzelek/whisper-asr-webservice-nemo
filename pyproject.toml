@@ -2,7 +2,25 @@
 name = "whisper-asr-webservice"
 version = "1.2.0"
 description = "Whisper ASR Webservice is a general-purpose speech recognition webservice."
+authors = [
+    { name = "Ahmet Öner" },
+    { name = "Besim Alibegovic" },
+]
 requires-python = ">=3.10,<3.13"
+readme = "README.md"
+license = { text = "MIT" }
+keywords = [
+    "speech-recognition",
+    "whisper",
+    "asr",
+    "webservice",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
 dependencies = [
     "fastapi (>=0.115.14)",
     "uvicorn[standard] (>=0.35.0)",
@@ -11,22 +29,11 @@ dependencies = [
     "numpy (>=2.2.6)",
     "openai-whisper (>=20250625)",
     "faster-whisper (>=1.1.1)",
-    "whisperx",
     "tqdm (>=4.67.1)",
     "llvmlite (>=0.44.0)",
     "numba (>=0.61.2)",
+    "whisperx",
 ]
-authors = [
-    { name = "Ahmet Öner" },
-    { name = "Besim Alibegovic" }
-]
-license = { text = "MIT" }
-readme = "README.md"
-keywords = ["speech-recognition", "whisper", "asr", "webservice"]
-
-[tool.poetry]
-requires-poetry = ">=2.0"
-packages = [{ include = "app" }]
 
 [project.urls]
 Homepage = "https://github.com/wzelek/whisper-asr-webservice-nemo/"
@@ -35,52 +42,53 @@ Repository = "https://github.com/wzelek/whisper-asr-webservice-nemo"
 [project.scripts]
 whisper-asr-webservice = "app.webservice:start"
 
-[project.optional-dependencies]
-cpu = [
-    "torch (==2.7.1)",
-    "torchaudio (==2.7.1)"
-]
-cuda = [
-    "torch (==2.7.1+cu126)",
-    "torchaudio (==2.7.1+cu126)"
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4,<9.0.0",
+    "ruff>=0.9.6,<1.0.0",
+    "black>=25.1.0,<26.0.0",
+    "mkdocs-material>=9.6.4,<10.0.0",
+    "pymdown-extensions>=10.14.3,<11.0.0",
 ]
 
-[[tool.poetry.source]]
+[tool.uv]
+default-groups = "all"
+
+[project.optional-dependencies]
+cpu = ["torch", "torchaudio"]
+cuda = ["torch", "torchaudio"]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cpu", marker = "extra == 'cpu' and extra != 'cuda' and platform_machine == 'x86_64' and sys_platform != 'darwin'" },
+    { index = "pytorch-cuda", marker = "extra == 'cuda' and extra != 'cpu' and platform_machine == 'x86_64' and sys_platform != 'darwin'" },
+]
+torchaudio = [
+    { index = "pytorch-cpu", marker = "extra == 'cpu' and extra != 'cuda' and platform_machine == 'x86_64' and sys_platform != 'darwin'" },
+    { index = "pytorch-cuda", marker = "extra == 'cuda' and extra != 'cpu' and platform_machine == 'x86_64' and sys_platform != 'darwin'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cuda"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[[tool.uv.index]]
 name = "pytorch-cpu"
 url = "https://download.pytorch.org/whl/cpu"
-priority = "explicit"
-
-[[tool.poetry.source]]
-name = "pytorch-cuda"
-url = "https://download.pytorch.org/whl/cu126"
-priority = "explicit"
-
-[tool.poetry.dependencies]
-whisperx = { url = "https://github.com/wzelek/whisperX-nemo" }
-torch = [
-    { markers = "extra == 'cpu' and extra != 'cuda' and platform_machine == 'x86_64' and sys_platform != 'darwin'", source = "pytorch-cpu"},
-    { markers = "extra == 'cuda' and extra != 'cpu' and platform_machine == 'x86_64' and sys_platform != 'darwin'", source = "pytorch-cuda"},
-    { markers = "extra == 'cpu' and extra != 'cuda' and sys_platform == 'darwin'", source = "pypi"},
-    { markers = "extra == 'cpu' and extra != 'cuda' and platform_machine == 'aarch64' and sys_platform != 'darwin'", source = "pypi"}
- ]
-torchaudio = [
-    { markers = "extra == 'cpu' and extra != 'cuda' and platform_machine == 'x86_64' and sys_platform != 'darwin'", source = "pytorch-cpu"},
-    { markers = "extra == 'cuda' and extra != 'cpu' and platform_machine == 'x86_64' and sys_platform != 'darwin'", source = "pytorch-cuda"},
-    { markers = "extra == 'cpu' and extra != 'cuda' and sys_platform == 'darwin'", source = "pypi"},
-    { markers = "extra == 'cpu' and extra != 'cuda' and platform_machine == 'aarch64' and sys_platform != 'darwin'", source = "pypi"}
- ]
+explicit = true
 
 
-[tool.poetry.group.dev.dependencies]
-pytest = ">=8.3.4,<9.0.0"
-ruff = ">=0.9.6,<1.0.0"
-black = ">=25.1.0,<26.0.0"
-mkdocs-material = ">=9.6.4,<10.0.0"
-pymdown-extensions = ">=10.14.3,<11.0.0"
+whisperx = { git = "https://github.com/wzelek/whisperX-nemo", rev = "main" }
+
+[tool.uv.build-backend]
+module-name = ["app"]
+module-root = ""
+namespace = true
 
 [build-system]
-requires = ["poetry-core>=2.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.8.15,<0.9.0"]
+build-backend = "uv_build"
 
 [tool.black]
 skip-string-normalization = true

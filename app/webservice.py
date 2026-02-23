@@ -1,6 +1,7 @@
 import importlib.metadata
 import os
 from os import path
+from tracemalloc import start
 from typing import Annotated, Optional, Union
 from urllib.parse import quote
 
@@ -76,6 +77,10 @@ async def asr(
         description="Diarize the input",
         include_in_schema=(True if CONFIG.ASR_ENGINE == "whisperx" and CONFIG.HF_TOKEN != "" else False),
     ),
+    diarize_model: Union[str, None] = Query(
+        default="nemo", 
+        enum=["nemo", "pyannote"]
+    ),
     min_speakers: Union[int, None] = Query(
         default=None,
         description="Min speakers in this file",
@@ -95,7 +100,7 @@ async def asr(
         initial_prompt,
         vad_filter,
         word_timestamps,
-        {"diarize": diarize, "min_speakers": min_speakers, "max_speakers": max_speakers},
+        {"diarize": diarize, "min_speakers": min_speakers, "max_speakers": max_speakers, "diarize_model": diarize_model},
         output,
     )
     return StreamingResponse(

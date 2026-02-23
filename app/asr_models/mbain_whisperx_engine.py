@@ -21,7 +21,8 @@ class WhisperXASR(ASRModel):
             'align_model': {}
         }
 
-    def load_model(self):
+    def load_model(self, options: Union[dict, None] = None):
+
         asr_options = {"without_timestamps": False}
         self.model['whisperx'] = whisperx.load_model(
             CONFIG.MODEL_NAME,
@@ -30,8 +31,10 @@ class WhisperXASR(ASRModel):
             asr_options=asr_options
         )
 
-        if CONFIG.HF_TOKEN != "":
+        diarize_model = options.get("diarize_model", None)
+        if CONFIG.HF_TOKEN != "" or diarize_model == "nemo":
             self.model['diarize_model'] = DiarizationPipeline(
+                model=diarize_model,
                 use_auth_token=CONFIG.HF_TOKEN,
                 device=CONFIG.DEVICE
             )
@@ -59,6 +62,7 @@ class WhisperXASR(ASRModel):
             options_dict["language"] = language
         if initial_prompt:
             options_dict["initial_prompt"] = initial_prompt
+
         with self.model_lock:
             result = self.model['whisperx'].transcribe(audio, **options_dict)
             language = result["language"]
